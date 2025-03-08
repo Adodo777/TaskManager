@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <title>Task Manager Pro</title>
+</head>
+
+<body>
+  <div class="app-container">
+    <main class="main-content">
+      <header class="main-header">
+        <h1 class="logo">TaskPro</h1>
+        <div class="header-actions">
+          <div class="search-container">
+            <input type="search" id="searchTask" placeholder="Rechercher une tâche...">
+            <span class="search-icon">🔍</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <div class="stat-icon pending">📝</div>
+          <div class="stat-info">
+            <h3>En cours</h3>
+            <p class="stat-count" id="pendingCount">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon completed">✅</div>
+          <div class="stat-info">
+            <h3>Terminées</h3>
+            <p class="stat-count" id="completedCount">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon canceled">❌</div>
+          <div class="stat-info">
+            <h3>Annulées</h3>
+            <p class="stat-count" id="canceledCount">0</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon total">📊</div>
+          <div class="stat-info">
+            <h3>Total</h3>
+            <p class="stat-count" id="totalCount">0</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-controls">
+        <div class="task-controls-left">
+          <button class="btn btn-primary" id="addTask">
+            <span class="btn-icon">+</span> Nouvelle tâche
+          </button>
+        </div>
+        <div class="task-controls-right">
+          <button class="btn btn-danger" id="deleteSelected">
+            <span class="btn-icon">🗑️</span> Supprimer
+          </button>
+          <div class="filter-container">
+            <select id="filterTasks" class="filter-select">
+              <option value="0">Toutes les tâches</option>
+              <option value="1">En cours</option>
+              <option value="2">Annulées</option>
+              <option value="3">Terminées</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <section class="tasks-container">
+        <div class="tasks-grid" id="main-task__content">
+          <!-- Les tâches seront générées ici dynamiquement -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Ajout de Tâche -->
+  <div class="modal" id="taskModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter une tâche</h2>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form action="#" class="form" id="addTaskForm">
+          <div class="form-group">
+            <label for="taskTitle">Titre</label>
+            <input type="text" name="taskTitle" id="taskTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="taskDescription">Description</label>
+            <textarea name="taskDescription" id="taskDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="taskDate">Date limite</label>
+            <input type="date" name="taskDate" id="taskDate" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelAddTask">Annuler</button>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Modification de Tâche -->
+  <div class="modal" id="editTaskModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier la tâche</h2>
+        <button class="modal-close" id="closeEditModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form action="#" class="form" id="editTaskForm">
+          <input type="hidden" name="taskId" id="editTaskId">
+          <div class="form-group">
+            <label for="editTaskTitle">Titre</label>
+            <input type="text" name="editTaskTitle" id="editTaskTitle" required>
+          </div>
+          <div class="form-group">
+            <label for="editTaskDescription">Description</label>
+            <textarea name="editTaskDescription" id="editTaskDescription" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="editTaskDate">Date limite</label>
+            <input type="date" name="editTaskDate" id="editTaskDate" required>
+          </div>
+          <div class="form-group">
+            <label for="editTaskStatus">Statut</label>
+            <select name="editTaskStatus" id="editTaskStatus" required>
+              <option value="1">En cours</option>
+              <option value="2">Annulé</option>
+              <option value="3">Terminé</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelEditTask">Annuler</button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Détails de Tâche -->
+  <div class="modal" id="taskDetailsModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="detailsTaskTitle">Détails de la tâche</h2>
+        <button class="modal-close" id="closeDetailsModal">&times;</button>
+      </div>
+      <div class="modal-body" id="taskDetailsContent">
+        <!-- Le contenu sera généré dynamiquement -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeDetailsBtn">Fermer</button>
+        <button class="btn btn-warning" id="editFromDetailsBtn">Modifier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmation de Suppression -->
+  <div class="modal" id="confirmDeleteModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container modal-sm">
+      <div class="modal-header">
+        <h2 class="modal-title">Confirmation</h2>
+        <button class="modal-close" id="closeConfirmModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir supprimer les tâches sélectionnées ?</p>
+        <p class="warning-text">Cette action est irréversible.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelDeleteBtn">Annuler</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn">Supprimer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts.js"></script>
+</body>
+
+</html>
